@@ -1,0 +1,9 @@
+<!-- autonomous.launch: launch stage with our navigation node -->
+
+<launch>
+
+	<node pkg="stage_ros" type="stageros" name="stage_ros" args="$(find simstage_group1)/worlds/rooms.world" />
+
+	<node pkg="simstage_group1" type="simstage_group1" name="simstage_group1" output="screen"/>
+
+</launch>
