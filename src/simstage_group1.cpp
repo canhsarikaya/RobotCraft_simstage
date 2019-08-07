@@ -11,10 +11,9 @@
 #define LEFT 2
 #define RIGHT 3
 #define STRAIGHT 4
-#define UNSTUCK 5
 #define CHECK_DISTANCE 0.5
 #define LINEAR_SPEED 1
-#define ANGULAR_SPEED 0.8
+#define ANGULAR_SPEED 0.5
 
 class ReactiveController
 {
@@ -37,10 +36,6 @@ private:
     {
         auto msg = geometry_msgs::Twist();
 
-/* 		if(obstacle_distance_front > CHECK_DISTANCE && obstacle_distance_right > CHECK_DISTANCE){
-			state = UNSTUCK;
-			//return msg;
-		}*/
 
       
         switch(state){
@@ -56,9 +51,7 @@ private:
 			case STRAIGHT:
 				return GoStraight();
 				break;
-			case UNSTUCK:
-				return GetFree();
-				break;
+
 		}
 		
         
@@ -82,7 +75,7 @@ private:
     {
 		auto msg = geometry_msgs::Twist();
 
-		if(obstacle_distance_front < CHECK_DISTANCE){
+		if(obstacle_distance_front < CHECK_DISTANCE-0.2){
 			state = RIGHT;			
 			return msg;
 		}
@@ -101,10 +94,6 @@ private:
     {
 		auto msg = geometry_msgs::Twist();
 
-		if(obstacle_distance_front > CHECK_DISTANCE && obstacle_distance_left > CHECK_DISTANCE){
-			state = UNSTUCK;
-			//return msg;
-		}
 
 		if(obstacle_distance_left < CHECK_DISTANCE){
 			state = STRAIGHT;
@@ -130,25 +119,6 @@ private:
 
 		}
 
-	geometry_msgs::Twist GetFree()
-    {
-		auto msg = geometry_msgs::Twist();
-
-		msg.linear.x = LINEAR_SPEED;
-
-		if(obstacle_distance_front < CHECK_DISTANCE){
-			state = RIGHT;
-			return msg;	
-		}
-
-		if(obstacle_distance_left < CHECK_DISTANCE){
-			state = STRAIGHT;
-			return msg;
-		}
-
-		return msg;
-	}
-
 
 
     void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
@@ -156,7 +126,7 @@ private:
         obstacle_distance_right = *std::min_element(&msg->ranges[0], &msg->ranges[59]);
         ROS_INFO("Min distance to obstacle right: %f", obstacle_distance_right);
 
-		obstacle_distance_front = *std::min_element(&msg->ranges[50], &msg->ranges[189]);
+		obstacle_distance_front = *std::min_element(&msg->ranges[70], &msg->ranges[169]);
         ROS_INFO("Min distance to obstacle front: %f", obstacle_distance_front);
 
 		obstacle_distance_left = *std::min_element(&msg->ranges[180], &msg->ranges[239]);
