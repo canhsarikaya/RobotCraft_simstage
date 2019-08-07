@@ -1,4 +1,4 @@
-<!-- autonomous.launch: launch stage with our navigation node -->
+<!-- reactive.launch: launch stage with our navigation node -->
 
 <launch>
 
